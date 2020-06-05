@@ -31,11 +31,27 @@
 </template>
 
 <script>
+import * as FetchTokenApi from '@/api/user/fetchToken'
+
+
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
-  }
+  },
+  mounted() {
+    FetchTokenApi.fetchToken('cmToken')
+      .then(res=>{
+        console.log(res)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+  },
+  methods: {
+    
+  },
 }
 </script>
 

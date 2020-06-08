@@ -36,14 +36,20 @@ const REFRESH_STATUS = {
 const createHttp = (requestType, tokenName = 'token') => ({ url, params, config }) => {
 
     this.status = null
+    this.orginalAxios = []
 
-    
+    let axiosPromise = requestType === 'GET' ? axios({ method: 'get', url, params, config }) : axios({ method: 'post', url, params, config })
+
+    if (this.status && this.status === REFRESH_STATUS.REFRESHING) {
+        this.orginalAxios.push(axiosPromise)
+    }
+
 
     return new Promise((resolve, reject) => {
-        let { access_token, terminationTime, refresh_token } = storage.fetch(tokenName)
+        let { access_token, terminationTime } = Storage.fetch(tokenName)
         let now = new Date().getTime()
         if (now - terminationTime >= 0) {
-            this.status = REFRESH_STATUS.START
+            this.status = REFRESH_STATUS.REFRESHING
             refreshToken(tokenName).then(token => {
                 this.status = REFRESH_STATUS.END
                 let haeader = {
@@ -51,13 +57,16 @@ const createHttp = (requestType, tokenName = 'token') => ({ url, params, config 
                     sign: compileSign(params, token)
                 };
 
-
+                this.orginalAxios.forEach(item=>{
+                    console.log(item)
+                    // item()
+                })
 
                 // return promise()
 
             }).catch(err => {
                 //这里进行刷新token的异常处理
-
+                this.status = REFRESH_STATUS.END
             })
         } else {
             let haeader = {

@@ -1,9 +1,15 @@
 const host = {
     dev: {
+        API_URL: 'http://10.12.0.117:9880',
+        CD_URL: 'http://10.12.0.117:9880/cdapi',
+        CM_URL: 'http://10.12.0.117:9880/consumer-admin',
+        COMMON_URL: 'http://10.12.0.117:9880/cd-sys-web',
+    },
+    pre: {
         API_URL: 'https://mobiletest.derucci.net',
-        CD_URL: 'https://mobiletest.derucci.net/cdapi',
-        CM_URL: 'https://mobiletest.derucci.net/consumer-admin',
-        COMMON_URL: 'https://mobiletest.derucci.net/cd-sys-web',
+        CD_URL: 'https://agencytest.derucci.net/api',
+        CM_URL: 'https://mobiletest.derucci.net',
+        COMMON_URL: 'https://agencytest.derucci.net',
     },
     prd: {
         API_URL: 'https://agency.derucci.com',

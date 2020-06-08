@@ -1,8 +1,7 @@
 
 import axios from 'axios'
 import Storage from '@/utils/storage/'
-import { compileSign } from '@/utils/newWork/compileSign'
-import { API_URL, CD_URL, CM_URL, COMMON_URL, } from '@/constants/urlConfig'
+import { CD_URL, CM_URL } from '@/constants/urlConfig'
 import { USER_PATH } from '@/constants/urls'
 
 
@@ -20,12 +19,14 @@ function getDeviceId() {
     localStorage.device_id = deviceId
     return deviceId
 }
+
 //获取token
 export const fetchToken = (tokenName = 'token', params) => {
     let url = tokenName == 'token' ? `${CD_URL}${USER_PATH.CD_TOKEN}` : `${CM_URL}${USER_PATH.CM_TOKEN}`
     let data = tokenName == 'token' ? params : CMTokenParms
     return axios({ method: 'post', url, data })
 }
+
 //刷新token
 export const refreshToken = (tokenName = 'token') => {
     return new Promise((resolve, reject) => {

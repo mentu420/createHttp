@@ -30,37 +30,65 @@ export const fetchToken = (tokenName = 'token', params) => {
 //刷新token
 export const refreshToken = (tokenName = 'token') => {
     return new Promise((resolve, reject) => {
-        let { access_token, terminationTime, refresh_token } = storage.fetch(tokenName)
-
-        let now = new Date().getTime()
-
-        if (now - terminationTime >= 0) {
-            let data = null;
-            let url = null
-            if (tokenName == 'token') {
-                data = { grant_type: 'refresh_token', refresh_token: refresh_token }
-                url = `${CD_URL}${USER_PATH.CD_TOKEN}`
-            } else {
-                date = CMTokenParms
-                url = `${CM_URL}${USER_PATH.CM_TOKEN}`
-            }
-            axios({ method: 'post', url, data }).then(res => {
-                if (!res.refresh_token) {
-                    reject(res)
-                    return
-                }
-                let result = Object.assign(res, {
-                    account: token.account,
-                    pwd: token.pwd,
-                    createTime: new Date().getTime()
-                })
-                Storage.save(tokenName, result)
-                resolve(res.access_token)
-            }).catch(err => {
-                reject(err)
-            })
+        let data = null;
+        let url = null
+        if (tokenName == 'token') {
+            data = { grant_type: 'refresh_token', refresh_token: refresh_token }
+            url = `${CD_URL}${USER_PATH.CD_TOKEN}`
         } else {
-            resolve(access_token)
+            date = CMTokenParms
+            url = `${CM_URL}${USER_PATH.CM_TOKEN}`
         }
+        axios({ method: 'post', url, data }).then(res => {
+            if (!res.refresh_token) {
+                reject(res)
+                return
+            }
+            let result = Object.assign(res, {
+                account: token.account,
+                pwd: token.pwd,
+                createTime: new Date().getTime()
+            })
+            Storage.save(tokenName, result)
+            resolve(res.access_token)
+        }).catch(err => {
+            reject(err)
+        })
     })
 }
+// export const refreshToken = (tokenName = 'token') => {
+//     return new Promise((resolve, reject) => {
+//         let { access_token, terminationTime, refresh_token } = storage.fetch(tokenName)
+
+//         let now = new Date().getTime()
+
+//         if (now - terminationTime >= 0) {
+//             let data = null;
+//             let url = null
+//             if (tokenName == 'token') {
+//                 data = { grant_type: 'refresh_token', refresh_token: refresh_token }
+//                 url = `${CD_URL}${USER_PATH.CD_TOKEN}`
+//             } else {
+//                 date = CMTokenParms
+//                 url = `${CM_URL}${USER_PATH.CM_TOKEN}`
+//             }
+//             axios({ method: 'post', url, data }).then(res => {
+//                 if (!res.refresh_token) {
+//                     reject(res)
+//                     return
+//                 }
+//                 let result = Object.assign(res, {
+//                     account: token.account,
+//                     pwd: token.pwd,
+//                     createTime: new Date().getTime()
+//                 })
+//                 Storage.save(tokenName, result)
+//                 resolve(res.access_token)
+//             }).catch(err => {
+//                 reject(err)
+//             })
+//         } else {
+//             resolve(access_token)
+//         }
+//     })
+// }

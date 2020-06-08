@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { refreshToken } from '@/api/user/fetchToken'
-
+import Storage from '@/utils/storage/'
 import { compileSign } from './compileSign'
 
 
@@ -8,12 +8,12 @@ axios.defaults.timeout = 2500;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 
-// const REFRESH_STATUS = {
-//     START: 0,
-//     REFRESHING: 1,
-//     END: 2,
-//     COUNT: 0,
-// }
+const REFRESH_STATUS = {
+    START: 0,
+    REFRESHING: 1,
+    END: 2,
+    COUNT: 0,
+}
 
 
 // class CreateHttp {
@@ -30,65 +30,82 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 //         this._handler(func)
 //     }
+//     fetch()
+// }   
 
-// }
+const createHttp = (requestType, tokenName = 'token') => ({ url, params, config }) => {
 
-// const createHttp = (requestType, tokenName = 'token') => ({ url, params, config }) => {
+    this.status = null
+
     
 
-//     refreshToken(tokenName).then(token => {
-//         let haeader = {
-//             Authorization: `Bearer ${token}`,
-//             sign: compileSign(params, token)
-//         };
-
-//         // let promise = requestType === 'GET' ? axios.get(url, { params, ...config, haeader }) : axios.post(url, data = params, { ...config, haeader })
-        
-//         // return promise()
-
-//     }).catch(err => {
-//         //这里进行刷新token的异常处理
-
-//     })
-
-// }
-
-//默认cdtoken
-/**
- * GET 请求
- * @param url
- * @param params
- * @param config
- * @returns {{promise: Promise}}
- */
-export const fetchHttp = createHttp('GET')
+    return new Promise((resolve, reject) => {
+        let { access_token, terminationTime, refresh_token } = storage.fetch(tokenName)
+        let now = new Date().getTime()
+        if (now - terminationTime >= 0) {
+            this.status = REFRESH_STATUS.START
+            refreshToken(tokenName).then(token => {
+                this.status = REFRESH_STATUS.END
+                let haeader = {
+                    Authorization: `Bearer ${token}`,
+                    sign: compileSign(params, token)
+                };
 
 
-/**
- * POST 请求
- * @param url
- * @param params
- * @param config
- * @returns {{promise: Promise}}
- */
-export const getHttp = createHttp('POST')
+
+                // return promise()
+
+            }).catch(err => {
+                //这里进行刷新token的异常处理
+
+            })
+        } else {
+            let haeader = {
+                Authorization: `Bearer ${access_token}`,
+                sign: compileSign(params, access_token)
+            };
+
+        }
+    })
+}
 
 
-/**
- * GET 请求
- * @param url
- * @param params
- * @param config
- * @returns {{promise: Promise}}
- */
-export const fetchHttpFromCM = createHttp('GET', 'cmToken')
+// //默认cdtoken
+// /**
+//  * GET 请求
+//  * @param url
+//  * @param params
+//  * @param config
+//  * @returns {{promise: Promise}}
+//  */
+// export const fetchHttp = createHttp('GET')
 
 
-/**
- * POST 请求
- * @param url
- * @param params
- * @param config
- * @returns {{promise: Promise}}
- */
-export const postHttpFromCM = createHttp('POST', 'cmToken')
+// /**
+//  * POST 请求
+//  * @param url
+//  * @param params
+//  * @param config
+//  * @returns {{promise: Promise}}
+//  */
+// export const getHttp = createHttp('POST')
+
+
+// /**
+//  * GET 请求
+//  * @param url
+//  * @param params
+//  * @param config
+//  * @returns {{promise: Promise}}
+//  */
+// export const fetchHttpFromCM = createHttp('GET', 'cmToken')
+
+
+// /**
+//  * POST 请求
+//  * @param url
+//  * @param params
+//  * @param config
+//  * @returns {{promise: Promise}}
+//  */
+// export const postHttpFromCM = createHttp('POST', 'cmToken')
